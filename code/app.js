@@ -4,21 +4,27 @@
 //setting dimensions of canvas
 class Game {
     constructor() {
-        this.canvas = document.querySelector('canvas'),
-        this.ctx = this.canvas.getContext('2d'),
-        this.canvasWith = 700,
+        this.canvas = document.querySelector('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.canvasWidth = 700;
         this.canvasHeight = 500;
-        this.paddleLeft = new Paddle(10, 10, 1);
-        this.paddleRight = new Paddle(10, 675, 2);
-        this.ball = new Ball(10, 10, 10);
+        this.paddleLeft = new Paddle(10, 0, 1);
+        this.paddleRight = new Paddle(10, 685, 2);
+        this.ball = new Ball(10, this.canvasWidth / 2, this.canvasHeight / 2);
+        this.scores = [0,0]
 
     }
 
     resetCanvas() {
         this.ctx.fillStyle = 'black';
-        this.ctx.fillRect(0,0,this.canvasWith,this.canvasHeight)
+        this.ctx.fillRect(0,0,this.canvasWidth,this.canvasHeight)
+        this.ctx.beginPath();
+        this.ctx.setLineDash([5, 15]);
+        this.ctx.moveTo(this.canvasWidth /2, 0);
+        this.ctx.lineTo(this.canvasWidth / 2, this.canvasHeight);
+        this.ctx.strokeStyle = 'white';
+        this.ctx.stroke();
     }
-
 
     play() {
         this.resetCanvas()
@@ -32,17 +38,34 @@ class Game {
             this.ball.render(this.ctx)
             this.paddleLeft.render(this.ctx)
             this.paddleRight.render(this.ctx)
-            this.checkCollision(), 17} )
+            this.checkCollision()
+            this.ctx.font = "25px Arial";
+            this.ctx.fillText(`Scores: ${this.scores[0]} : ${this.scores[1]}`, this.canvasWidth / 2 - 100, 30)
+            , 17} )
     };
 
     checkCollision() {
-        if (this.ball.posY <= this.paddleLeft.posY) 
-            {   
-                console.log('Y-Axis: true')  
-                if (this.ball.posX <= this.paddleLeft.posX) console.log('X-Axis: true')
-                    return true;
-                    }
+        if (this.ball.posX - this.ball.radius <= this.paddleLeft.posX + 15 &&
+            this.ball.posY + this.ball.radius >= this.paddleLeft.posY &&
+            this.ball.posY - this.ball.radius <= this.paddleLeft.posY + 50) {
+                this.ball.vx = this.ball.vx  * -1
+            }
+        // add if statement to draw paddle bottom line
+        // add if statement to draw paddle top line
 
+        if (this.ball.posX + this.ball.radius >= this.paddleRight.posX &&
+            this.ball.posY + this.ball.radius >= this.paddleRight.posY &&
+            this.ball.posY - this.ball.radius <= this.paddleRight.posY + 50) {
+                    this.ball.vx = this.ball.vx  * -1
+            }
+        // add if statement to draw paddle bottom line
+        // add if statement to draw paddle top line
+    }
+
+    checkPoint(winner) {
+        ( winner === 1 ) ? this.scores[0]++ : this.scores[1]++
+        this.ball.posX = this.canvasWidth / 2
+        this.ball.posY = this.canvasHeight / 2
     }
     
 }
@@ -50,28 +73,32 @@ class Game {
 class Ball {
     constructor(radius, initPosY, initPosX) {
         this.radius = radius,
-        this.posX = initPosX, //initPos as Array: [y, x axis of canvas]
+        this.posX = initPosX,
         this.posY = initPosY
         this.d = radius * 2
-        this.vx = +2;
-        this.vy = +2;
+        this.vx = +1;
+        this.vy = +1;
     }
 
     render(context) { 
         context.beginPath();
-        context.arc(this.posY, this.posX, this.radius, 2 * Math.PI, false);
+        context.arc(this.posX, this.posY, this.radius, 2 * Math.PI, false);
         context.fillStyle = 'white';
         context.fill();    
     }
 
     move() {
-          this.posY += this.vx;
-          this.posX += this.vy;
-          if (this.posY - this.radius >= game.canvasWith || this.posY - this.radius <= 0) {
-            this.vx = this.vx * -1
-          }
-          if (this.posX - this.radius >= game.canvasHeight || this.posX - this.radius <= 0) {
+          this.posY += this.vy;
+          this.posX += this.vx;
+          if (this.posY + this.radius >= game.canvasHeight || this.posY - this.radius <= 0) {
             this.vy = this.vy * -1
+          }
+          if (this.posX + this.radius >= game.canvasWidth || this.posX - this.radius <= 0) {
+            this.vx = this.vx * -1
+            
+            let winner 
+            (this.vx > 0) ? winner = 2 : winner = 1
+            game.checkPoint(winner) 
           }
 
         }
@@ -82,25 +109,25 @@ class Paddle {
         this.player = player
         this.posX = initPosX
         this.posY = initPosY
-        this.vx = +2;
-        this.vy = +2;
+        this.vx = +1;
+        this.vy = +1;
         document.addEventListener('keydown', (e) => {
             switch (player) {
                 case 1:
-                    if (e.key === 's') {
-                        if  (this.posY <= game.canvasHeight - 55) this.posY += 5;
+                    if (e.key === 's'|| e.key === 'S') {
+                        if  (this.posY+50 <= game.canvasHeight) this.posY += 20;
                     }
 
-                    if (e.key === 'w') {
-                        if (this.posY >= 10) this.posY -= 5;
+                    if (e.key === 'w' || e.key === 'W') {
+                        if (this.posY >= 10) this.posY -= 20;
                     } 
                 break;
                 case 2:
                     if (e.key === 'ArrowUp') {
-                        if (this.posY >= 10)  this.posY -= 5;
+                        if (this.posY >= 10)  this.posY -= 20;
                     }
                     if (e.key === 'ArrowDown') {
-                        if (this.posY<= game.canvasHeight - 55) this.posY += 5;
+                        if (this.posY<= game.canvasHeight - 55) this.posY += 20;
                     } 
                 break;
                 default:
