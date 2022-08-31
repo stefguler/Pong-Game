@@ -10,7 +10,7 @@ class Game {
         this.canvasHeight = 500;
         this.paddleLeft = new Paddle(10, 10, 1);
         this.paddleRight = new Paddle(10, 675, 2);
-        this.ball = new Ball(10, [10,10]);
+        this.ball = new Ball(10, 10, 10);
 
     }
 
@@ -18,7 +18,6 @@ class Game {
         this.ctx.fillStyle = 'black';
         this.ctx.fillRect(0,0,this.canvasWith,this.canvasHeight)
     }
-
 
 
     play() {
@@ -32,43 +31,57 @@ class Game {
             this.ball.move();
             this.ball.render(this.ctx)
             this.paddleLeft.render(this.ctx)
-            this.paddleRight.render(this.ctx), 17} )
+            this.paddleRight.render(this.ctx)
+            this.checkCollision(), 17} )
     };
 
+    checkCollision() {
+        if (this.ball.posY <= this.paddleLeft.posY) 
+            {   
+                console.log('Y-Axis: true')  
+                if (this.ball.posX <= this.paddleLeft.posX) console.log('X-Axis: true')
+                    return true;
+                    }
+
+    }
+    
 }
 
 class Ball {
-    constructor(radius, initPos) {
+    constructor(radius, initPosY, initPosX) {
         this.radius = radius,
-        this.initPos = initPos, //initPos as Array: [y, x axis of canvas]
+        this.posX = initPosX, //initPos as Array: [y, x axis of canvas]
+        this.posY = initPosY
+        this.d = radius * 2
         this.vx = +2;
         this.vy = +2;
     }
 
     render(context) { 
         context.beginPath();
-        context.arc(this.initPos[0], this.initPos[1], this.radius, 2 * Math.PI, false);
+        context.arc(this.posY, this.posX, this.radius, 2 * Math.PI, false);
         context.fillStyle = 'white';
         context.fill();    
     }
 
     move() {
-          this.initPos[0] += this.vx;
-          this.initPos[1] += this.vy;
-          if (this.initPos[0] - this.radius >= game.canvasWith || this.initPos[0] - this.radius <= 0) {
+          this.posY += this.vx;
+          this.posX += this.vy;
+          if (this.posY - this.radius >= game.canvasWith || this.posY - this.radius <= 0) {
             this.vx = this.vx * -1
           }
-          if (this.initPos[1] - this.radius >= game.canvasHeight || this.initPos[1] - this.radius <= 0) {
+          if (this.posX - this.radius >= game.canvasHeight || this.posX - this.radius <= 0) {
             this.vy = this.vy * -1
           }
+
         }
     }
 
 class Paddle {
-    constructor(initPosY, initposX, player) {
+    constructor(initPosY, initPosX, player) {
         this.player = player
-        this.posY = initPosY, //initPos as Array: [y, x axis of canvas]
-        this.posX = initposX,
+        this.posX = initPosX
+        this.posY = initPosY
         this.vx = +2;
         this.vy = +2;
         document.addEventListener('keydown', (e) => {
@@ -87,7 +100,7 @@ class Paddle {
                         if (this.posY >= 10)  this.posY -= 5;
                     }
                     if (e.key === 'ArrowDown') {
-                        if (this.posY <= game.canvasHeight - 55) this.posY += 5;
+                        if (this.posY<= game.canvasHeight - 55) this.posY += 5;
                     } 
                 break;
                 default:
