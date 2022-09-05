@@ -5,8 +5,8 @@ class Game {
         this.ctx = this.canvas.getContext('2d');
         this.canvasWidth = 700;
         this.canvasHeight = 500;
-        this.paddleLeft = new Paddle(10, 0, 1);
-        this.paddleRight = new Paddle(10, 685, 2);
+        this.paddleLeft = new LeftPaddle(10, 0);
+        this.paddleRight = new RightPaddle(10, 685);
         this.ball = new Ball(10, this.canvasWidth / 2, this.canvasHeight / 2);
         this.scores = [0,0]
 
@@ -102,7 +102,7 @@ class Ball {
     }
 
 class Paddle {
-    constructor(initPosY, initPosX, player) {
+    constructor(initPosY, initPosX) {
         this.player = player
         this.posX = initPosX
         this.posY = initPosY
