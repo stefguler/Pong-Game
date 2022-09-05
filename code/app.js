@@ -103,7 +103,6 @@ class Ball {
 
 class Paddle {
     constructor(initPosY, initPosX) {
-        this.player = player
         this.posX = initPosX
         this.posY = initPosY
         this.vx = +1;
