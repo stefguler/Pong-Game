@@ -152,8 +152,7 @@ class RightPaddle extends Paddle {
                         }   
             })
         }
-    }
-}
+  }
 
 //start game
 const game = new Game();
