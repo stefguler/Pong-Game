@@ -1,6 +1,3 @@
-
-
-
 //setting dimensions of canvas
 class Game {
     constructor() {
@@ -111,36 +108,51 @@ class Paddle {
         this.posY = initPosY
         this.vx = +1;
         this.vy = +1;
-        document.addEventListener('keydown', (e) => {
-            switch (player) {
-                case 1:
-                    if (e.key === 's'|| e.key === 'S') {
-                        if  (this.posY+50 <= game.canvasHeight) this.posY += 20;
-                    }
-
-                    if (e.key === 'w' || e.key === 'W') {
-                        if (this.posY >= 10) this.posY -= 20;
-                    } 
-                break;
-                case 2:
-                    if (e.key === 'ArrowUp') {
-                        if (this.posY >= 10)  this.posY -= 20;
-                    }
-                    if (e.key === 'ArrowDown') {
-                        if (this.posY<= game.canvasHeight - 55) this.posY += 20;
-                    } 
-                break;
-                default:
-                    return 'only 2 players possible'
-                }                
-        })
     }
 
     render(context) { 
         context.fillStyle = 'white';
         context.fillRect(this.posX, this.posY, 15 , 50);  
     }
+    
+}
+    
+class LeftPaddle extends Paddle { 
+    constructor(initPosY, initPosX) {
+        super(initPosY, initPosX)
+        this.posX = initPosX
+        this.posY = initPosY
+        this.vx = +1;
+        this.vy = +1;
+        document.addEventListener('keydown', (e) => {
+                    if (e.key === 's'|| e.key === 'S') {
+                        if  (this.posY+50 <= game.canvasHeight) this.posY += 20;
+                    }
 
+                    if (e.key === 'w' || e.key === 'W') {
+                        if (this.posY >= 10) this.posY -= 20;
+                    }   
+        })
+    }
+}
+
+class RightPaddle extends Paddle {
+        constructor(initPosY, initPosX) {
+            super(initPosY, initPosX)
+            this.posX = initPosX
+            this.posY = initPosY
+            this.vx = +1;
+            this.vy = +1;
+            document.addEventListener('keydown', (e) => {
+                        if (e.key === 'ArrowDown') {
+                            if (this.posY+50 <= game.canvasHeight) this.posY += 20;
+                        }   
+                        if (e.key === 'ArrowUp') {
+                            if (this.posY >= 10) this.posY -= 20;
+                        }   
+            })
+        }
+    }
 }
 
 //start game
